@@ -1,0 +1,652 @@
+{
+  "name": "New Jersey real state",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -192,
+        -16
+      ],
+      "id": "c719b3ee-d0b2-405f-a9c1-96470fd9a0ce",
+      "name": "When chat message received",
+      "webhookId": "3345e437-dc81-46ad-b52c-0792fa26fb0f"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "46979aaa-92a3-4426-88d7-2c1bfd891727",
+              "name": "question",
+              "value": "={{ $json.chatInput }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -32,
+        -16
+      ],
+      "id": "90a1fb55-c656-4a69-b2bb-4f9993764ed8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash-lite-preview-06-17",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash-lite-preview-06-17"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Classify the following question into one of these categories:\n- pricing\n- mortgage\n- school\n- regulation\n- trend\n\nOnly return the category name. No explanation.\n\nQuestion: {{ $json[\"question\"] }}\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        176,
+        -16
+      ],
+      "id": "23863290-c82c-4872-ac66-608792e57a0a",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "mABp4vyYrw7w397J",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f4dc0d60-b4e6-4c7d-a392-14a13a69b3cf",
+              "name": "intent",
+              "value": "={{ $json.content.parts[0].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        528,
+        -16
+      ],
+      "id": "13cf0fa6-e76c-4593-ad20-9e88fac36b5c",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json[\"intent\"] }}",
+                    "rightValue": "pricing",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "d947ff50-d8fd-455a-866d-fe5bbc4ad686"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3e7e14fc-93ae-4d65-a8f0-a7dfead15eef",
+                    "leftValue": "={{ $json[\"intent\"] }}",
+                    "rightValue": "mortgage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "486e879f-6603-4caf-86e2-6d4050f943c7",
+                    "leftValue": "={{ $json.intent }}",
+                    "rightValue": "school",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6fd6897a-c742-4527-a8c6-e8570f9daadc",
+                    "leftValue": "={{ $json.intent }}",
+                    "rightValue": "regulation",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7202af06-e7c6-4f52-b49b-f0ef73df4f0a",
+                    "leftValue": "={{ $json.intent }}",
+                    "rightValue": "trend",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        736,
+        -64
+      ],
+      "id": "8490dbd1-0fa0-4703-93ab-51d5bc78e09e",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "searchMethod": "query",
+        "queryString": "name contains '.csv'",
+        "returnAll": true,
+        "filter": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        976,
+        -80
+      ],
+      "id": "7626e46f-88c2-4912-992c-a37860b81c09",
+      "name": "Search files and folders",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "4ojNWihJtZ9zIH5k",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1216,
+        -80
+      ],
+      "id": "d0bd037d-a07c-4260-99b4-18e97a8ccd27",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1424,
+        -96
+      ],
+      "id": "6cd54c8f-ef37-4e26-8872-6f82f42f9735",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "4ojNWihJtZ9zIH5k",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1632,
+        -96
+      ],
+      "id": "514eec91-036b-4ed1-ae38-00778434acbf",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "jsCode": "const flatArray = items[0].json;  // assuming the whole file is in a single object\n\n// Convert object to flat array (if needed)\nconst values = Object.values(flatArray);\n\n// Group date-price pairs\nconst parsedData = [];\nfor (let i = 0; i < values.length; i += 2) {\n  if (values[i] && values[i + 1]) {\n    parsedData.push({\n      date: values[i],\n      price: parseFloat(values[i + 1])\n    });\n  }\n}\n\nreturn parsedData.map(entry => ({ json: entry }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1888,
+        -96
+      ],
+      "id": "75240b1b-5e94-4ce4-a75e-36fc2ca20588",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash-lite-preview-06-17",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash-lite-preview-06-17"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=System: You are a helpful New Jersey real estate assistant. Answer the user's question concisely and professionally, *strictly using only the \"Relevant real estate data\" provided below*. If the data does not contain the answer, state that you cannot provide the information from the given data. Do not make up information.\n\nUser's question: \"{{ $json.originalQuestion }}\"\n\nRelevant real estate data:\n{{ $json.finalCombinedData }}\n\nYour answer:"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        2096,
+        -96
+      ],
+      "id": "2932ab80-bf62-4eb8-913d-c4f1c70e0e52",
+      "name": "Message a model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "mABp4vyYrw7w397J",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e1f9e9c9-e2f5-40ec-90ae-103f76f67e37",
+              "name": "message",
+              "value": "={{ $json.content.parts[0].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2400,
+        -96
+      ],
+      "id": "05f920fd-28d8-4046-add3-7fe675147ef3",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1N1SIDEF4Az6XhhoxZBbhBCc35015XaX8",
+          "mode": "list",
+          "cachedResultName": "index.csv",
+          "cachedResultUrl": "https://drive.google.com/file/d/1N1SIDEF4Az6XhhoxZBbhBCc35015XaX8/view?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1040,
+        96
+      ],
+      "id": "9d45e5bc-9e57-412c-9b41-25fc3f19ccfb",
+      "name": "Download file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "4ojNWihJtZ9zIH5k",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        96
+      ],
+      "id": "a9bc8223-77f8-402e-9368-51b067b6550a",
+      "name": "Extract from File1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash-preview-05-20",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash-preview-05-20"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=The following data represents mortgage interest rates over time:\n\n{{ $json.processedDataChunk }}\n\nPlease summarize the trend, and tell me whether mortgage rates are increasing, decreasing, or stable.\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        96
+      ],
+      "id": "a7b1bc8f-6016-4341-8a5f-f6e2e268708e",
+      "name": "Message a model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "mABp4vyYrw7w397J",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Step 1: Get the input JSON data\nconst items = $input.all();\nconst data = items.flatMap(item => item.json);\n\n// Step 2: Parse the date-value data\nconst parsedData = data.map(entry => {\n  const date = entry.date || Object.keys(entry)[0];\n  const value = parseFloat(entry.value || entry[date]);\n  return { date, value };\n}).filter(entry => entry.date && !isNaN(entry.value));\n\n// Step 3: Sort by date\nparsedData.sort((a, b) => new Date(a.date) - new Date(b.date));\n\n// Step 4: Calculate trend\nconst first = parsedData[0];\nconst last = parsedData[parsedData.length - 1];\n\nlet trend = \"\";\nif (last.value > first.value) {\n  trend = \"increased\";\n} else if (last.value < first.value) {\n  trend = \"decreased\";\n} else {\n  trend = \"remained stable\";\n}\n\n// Step 5: Output the summary\nreturn [\n  {\n    json: {\n      processedDataChunk: `From ${first.date} to ${last.date}, the value has ${trend} from ${first.value} to ${last.value}.`\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1456,
+        96
+      ],
+      "id": "13c392f8-e8e9-4d2a-96c3-37d54b687cd4",
+      "name": "Code1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download file1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [],
+        [
+          {
+            "node": "Download file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file1": {
+      "main": [
+        [
+          {
+            "node": "Extract from File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Message a model2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model2": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6da0faa3-8670-4d62-b921-1f476c65b47f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95bbc74a0f850893311b47775938a3c748b77e33d3ba30ada5f84ae82d3e4680"
+  },
+  "id": "O1rHS5mcXWjNjSFb",
+  "tags": []
+}
